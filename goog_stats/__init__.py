@@ -22,7 +22,7 @@ class Stats(object):
         if self.config_path.exists():
             self.__load_config()
         else:
-            self.enabled = True
+            self.collection_conf[consts.ENABLED] = True
             self.start_time = time.time()
             self.collection_conf[consts.CLIENT_ID] = uuid.uuid4().__str__()
             self.collection_conf[consts.TARGET_ID] = tid
