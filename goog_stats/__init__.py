@@ -33,13 +33,6 @@ class Stats(object):
         with open(self.config_path, 'w') as outfile:
             json.dump(self.collection_conf, outfile)
 
-    def __init_config(self, f: str):
-        if self.collection_conf[consts.ENABLED]:
-            print("file contents are {}".format(f))
-
-        else:
-            print("stats collection disabled")
-
     def create_working_dir(self):
         self.working_dir.mkdir(parents=True, exist_ok=True)
         self.config_path = Path("{}/{}".format(self.working_dir, consts.CONFIG_FILE_PATH))
@@ -66,5 +59,4 @@ class Stats(object):
         return self.collection_conf[consts.ENABLED]
 
     def __load_config(self):
-        conf = json.load(open(self.config_path))
-        self.__init_config(conf)
+        self.collection_conf = json.load(open(self.config_path))
