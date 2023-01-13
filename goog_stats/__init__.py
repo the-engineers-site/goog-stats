@@ -74,6 +74,6 @@ class Stats(object):
 
     @classmethod
     def reset(cls):
-        stats = Stats()
+        stats = Stats("test")
         if stats.config_path.exists():
             stats.config_path.unlink()
