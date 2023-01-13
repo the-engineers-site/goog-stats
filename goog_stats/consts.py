@@ -14,9 +14,9 @@ APP_NAME = "goog-stats"
 analytics_config = {
     ENABLED: True,
     API_URL: 'https://www.google-analytics.com/j/collect',
-    API_VERSION: 'v1',
+    API_VERSION: '1',
     TARGET: 'pageview',
-    USER_LANG: 'en',
+    USER_LANG: 'en-in',
     RECORD_PARTICULARS: '',
     TARGET_ID: '',
     CLIENT_ID: '',

@@ -1,12 +1,12 @@
 import uuid
-
+import os
 import typer
 import time
 from pathlib import Path
 import logging
 import json
 
-import goog_stats.consts
+from goog_stats import consts, analyticsapi
 
 LOGGER = logging.getLogger(__name__)
 
@@ -17,16 +17,14 @@ class Stats(object):
     working_dir = Path(typer.get_app_dir(consts.APP_NAME))
     config_path = ""
 
-    def __init__(self, tid: str, ul: str = 'en') -> None:
+    def __init__(self, tid: str = "", ul: str = 'en', reset_pref: bool = False) -> None:
         self.create_working_dir()
-        if self.config_path.exists():
+        if self.config_path.exists() and not reset_pref:
             self.__load_config()
         else:
-            self.collection_conf[consts.ENABLED] = True
-            self.start_time = time.time()
-            self.collection_conf[consts.CLIENT_ID] = uuid.uuid4().__str__()
-            self.collection_conf[consts.TARGET_ID] = tid
-            self.collection_conf[consts.USER_LANG] = ul
+            if tid == "":
+                raise Exception("tid mandatory for starting collection")
+            self.init_config(tid, ul)
             self.write_config()
 
     def write_config(self):
@@ -60,3 +58,22 @@ class Stats(object):
 
     def __load_config(self):
         self.collection_conf = json.load(open(self.config_path))
+
+    def init_config(self, tid, ul):
+        self.collection_conf[consts.ENABLED] = True
+        self.start_time = time.time()
+        self.collection_conf[consts.CLIENT_ID] = uuid.uuid4().__str__()
+        self.collection_conf[consts.TARGET_ID] = tid
+        self.collection_conf[consts.USER_LANG] = ul
+
+    def record_event(self, record_category, record_particulars):
+        if self.collection_conf[consts.ENABLED]:
+            return analyticsapi.record_event(self.collection_conf, record_category, record_particulars)
+        else:
+            return "collection disabled"
+
+    @classmethod
+    def reset(cls):
+        stats = Stats()
+        if stats.config_path.exists():
+            stats.config_path.unlink()
